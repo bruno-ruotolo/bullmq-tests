@@ -13,19 +13,10 @@ async function getPhotos() {
   if (!photosCached) {
     const URL = "https://jsonplaceholder.typicode.com";
     const { data: photos } = await axios.get(`${URL}/photos`);
-    await client.set("photos", JSON.stringify(photos));
-    await addQueue(photos);
+    return photos;
   }
 
-  await addQueue(JSON.parse(photosCached));
-
-  new Worker("Photos", async (job) => {
-    return await job.data;
-  });
-}
-
-async function addQueue(photo: any) {
-  await photosQueue.add("photo", photo);
+  return JSON.parse(photosCached);
 }
 
 export const photoService = { getPhotos };
